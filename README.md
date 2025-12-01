@@ -8,4 +8,116 @@ docker exec -it -u 0 odoo18_app odoo scaffold calcular-cansancio /mnt/extra-addo
 docker exec -it odoo18_app chmod -R 777 /mnt/extra-addons/calcular-cansancio
 
 ## Ahora tenemos que configurar el archivo manifest, dentro de la carpeta addons calcular-cansancio:
+<img width="1267" height="876" alt="image" src="https://github.com/user-attachments/assets/b044cb13-09ff-4255-89df-62b197a16187" />
+
+## Seguido de la anterior configuración ahora configuramos el archivo models.py:
+from odoo import models, fields, api
+
+class CansancioRegistro(models.Model):
+    _name = 'cansancio.registro'
+    _description = 'Registro de Nivel de Sueño y Bebida Recomendada'
+
+    nombre_alumno = fields.Char(
+        string='Alumno',
+        required=True
+    )
+
+    nivel_sueno = fields.Integer(
+        string='Nivel de Sueño (1-10)',
+        required=True,
+        help="Introduce el nivel de sueño (1 = poco, 10 = máximo)"
+    )
+
+    bebida_recomendado = fields.Char(
+        string='Bebida Recomendada',
+        compute='_calcular_bebida',
+        store=True, 
+        readonly=True
+    )
+
+    # MÉTODO PARA CALCULAR LA BEBIDA
+    @api.depends('nivel_sueno')
+    def _calcular_bebida(self):
+        for record in self:
+            nivel = record.nivel_sueno
+            bebida = ''
+            
+            # Reglas para calcular la bebida:
+            if 1 <= nivel <= 3:
+                bebida = 'Café con leche'
+            elif 4 <= nivel <= 6:
+                bebida = 'Café solo largo'
+            elif 7 <= nivel <= 9:
+                bebida = 'Café solo larguísimo'
+            elif nivel == 10:
+                bebida = 'Inyección de adrenalina'
+            else:
+                bebida = 'Nivel de sueño fuera de rango (1-10)'
+            
+            record.bebida_recomendado = bebida
+
+## Por ultimo configuramos le archivo views.xml:
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record id="view_cansancio_registro_tree" model="ir.ui.view">
+        <field name="name">cansancio.registro.tree</field>
+        <field name="model">cansancio.registro</field>
+        <field name="arch" type="xml">
+            <tree string="Registros de Cansancio">
+                <field name="nombre_alumno"/>
+                <field name="nivel_sueno"/>
+                <field name="bebida_recomendado"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_cansancio_registro_form" model="ir.ui.view">
+        <field name="name">cansancio.registro.form</field>
+        <field name="model">cansancio.registro</field>
+        <field name="arch" type="xml">
+            <form string="Registro de Sueño">
+                <sheet>
+                    <group>
+                        <field name="nombre_alumno"/>
+                        <field name="nivel_sueno"/>
+                        <field name="bebida_recomendado" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cansancio_registro" model="ir.actions.act_window">
+        <field name="name">Registro de Sueño</field>
+        <field name="res_model">cansancio.registro</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_cansancio_registro_tree"/>
+    </record>
+
+    <menuitem id="menu_cansancio_root"
+              name="Calculador de Cansancio"
+              sequence="10"/>
+
+    <menuitem id="menu_registro_sueno_action"
+              name="Recomendación de Bebidas"
+              parent="menu_cansancio_root"
+              action="action_cansancio_registro"
+              sequence="1"/>
+
+  </data>
+</odoo>
+
+## Confirmación del funcionamiento:
+
+
+
+
+            
+
+
+            
+
+
 
