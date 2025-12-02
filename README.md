@@ -57,59 +57,70 @@ class CansancioRegistro(models.Model):
             record.bebida_recomendado = bebida
 
 ## Por ultimo configuramos le archivo views.xml:
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-  <data>
+    <data>
+        <record id="cansancio_registro_form_view" model="ir.ui.view">
+            <field name="name">cansancio.registro.form</field>
+            <field name="model">cansancio.registro</field>
+            <field name="arch" type="xml">
+                <form string="Registro de Cansancio">
+                    <sheet>
+                        <group>
+                            <field name="nombre_alumno"/>
+                            <field name="nivel_sueno"/>
+                            <field name="bebida_recomendado"/> 
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
 
-    <record id="view_cansancio_registro_tree" model="ir.ui.view">
-        <field name="name">cansancio.registro.tree</field>
-        <field name="model">cansancio.registro</field>
-        <field name="arch" type="xml">
-            <tree string="Registros de Cansancio">
-                <field name="nombre_alumno"/>
-                <field name="nivel_sueno"/>
-                <field name="bebida_recomendado"/>
-            </tree>
-        </field>
-    </record>
+        <record id="cansancio_registro_tree_view" model="ir.ui.view">
+            <field name="name">cansancio.registro.tree</field>
+            <field name="model">cansancio.registro</field>
+            <field name="arch" type="xml">
+                <list string="Registros de Cansancio">
+                    <field name="nombre_alumno"/>
+                    <field name="nivel_sueno"/>
+                    <field name="bebida_recomendado"/>
+                </list>
+            </field>
+        </record>
 
-    <record id="view_cansancio_registro_form" model="ir.ui.view">
-        <field name="name">cansancio.registro.form</field>
-        <field name="model">cansancio.registro</field>
-        <field name="arch" type="xml">
-            <form string="Registro de Sueño">
-                <sheet>
-                    <group>
-                        <field name="nombre_alumno"/>
-                        <field name="nivel_sueno"/>
-                        <field name="bebida_recomendado" readonly="1"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
+        <record id="cansancio_registro_action" model="ir.actions.act_window">
+            <field name="name">Calculador de Bebidas</field>
+            <field name="res_model">cansancio.registro</field>
+            <field name="view_mode">list,form</field>
+        </record>
 
-    <record id="action_cansancio_registro" model="ir.actions.act_window">
-        <field name="name">Registro de Sueño</field>
-        <field name="res_model">cansancio.registro</field>
-        <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_cansancio_registro_tree"/>
-    </record>
+        <menuitem 
+            id="cansancio_registro_menu_root"
+            name="Control de Sueño"
+            sequence="10"
+            web_icon="calcular-cansancio,static/description/icon.png"/>
 
-    <menuitem id="menu_cansancio_root"
-              name="Calculador de Cansancio"
-              sequence="10"/>
-
-    <menuitem id="menu_registro_sueno_action"
-              name="Recomendación de Bebidas"
-              parent="menu_cansancio_root"
-              action="action_cansancio_registro"
-              sequence="1"/>
-
-  </data>
+        <menuitem 
+            id="cansancio_registro_sub_menu"
+            name="Registro de Cansancio"
+            parent="cansancio_registro_menu_root"
+            action="cansancio_registro_action"
+            sequence="1"/>
+            
+    </data>
 </odoo>
 
 ## Confirmación del funcionamiento:
+Entramos en modo desarollador en Odoo, cambiando la URL anterior a la siguiente:
+### http://localhost:8069/odoo/discuss/?debug=1
+Vamos a aplicaciones y buscamos nuestra app, en este caso calcular-cansancio y la activamos:
+<img width="827" height="403" alt="image" src="https://github.com/user-attachments/assets/dbad8951-b488-40dd-9ad6-08c4e123e1c2" />
+
+<img width="1918" height="538" alt="image" src="https://github.com/user-attachments/assets/331c8e9e-f9ba-486c-8153-257ebe44936a" />
+
+
+
+
 
 
 
